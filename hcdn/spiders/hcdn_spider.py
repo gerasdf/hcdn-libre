@@ -33,7 +33,8 @@ def build_url(base, parameters):
 
     return answer
 
-SEARCH_BASE = FILE #build_url(URL_BASE, ARGS_BASE)
+SEARCH_BASE = build_url(URL_BASE, ARGS_BASE)
+# SEARCH_BASE = FILE 
 
 class Proyecto(scrapy.Item):
     titulo = scrapy.Field()

@@ -49,6 +49,19 @@ class HCDN(scrapy.Spider):
     def start_requests(self):
         yield scrapy.Request(url=SEARCH_BASE, callback=self.parse)
 
+    def parse_metadata(self, proyecto, item):
+        metadata = proyecto.css('div.dp-metadata')
+        names  = metadata.css('strong::text').extract()
+        values = metadata.css('span::text').extract()
+
+        for name, value in zip(names, values):
+            good_name = name[:-2].replace(' ','_').lower()
+            item[good_name] = value
+
+        if names[-1].lower().startswith('ley '):
+           ley = names[-1].split(' ')[1]
+           item['ley'] = ley
+
     def parse(self, response):
         in_this_page = response.css('div.detalle-proyecto')
         for proyecto in in_this_page:
@@ -56,17 +69,7 @@ class HCDN(scrapy.Spider):
 
             item['titulo'] = proyecto.css('div.dp-texto::text').extract_first()
 
-            metadata = proyecto.css('div.dp-metadata')
-            names  = metadata.css('strong::text').extract()
-            values = metadata.css('span::text').extract()
-
-            for name, value in zip(names, values):
-                good_name = name[:-2].replace(' ','_').lower()
-                item[good_name] = value
-
-            if names[-1].lower().startswith('ley '):
-               ley = names[-1].split(' ')[1]
-               item['ley'] = ley
+            self.parse_metadata(proyecto, item)
 
             yield item
 

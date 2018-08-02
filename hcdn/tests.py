@@ -1,6 +1,6 @@
 # -*- coding: latin-1 -*-
 import unittest
-import hcdn_spider
+from spiders import hcdn_spider
 from scrapy.http.response.html import HtmlResponse
 
 html_one = """

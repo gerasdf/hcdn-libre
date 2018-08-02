@@ -73,6 +73,21 @@ class HCDN(scrapy.Spider):
 
             self.parse_metadata(proyecto, item)
 
+            for box in proyecto.css('div.dp-box'):
+                # FIRMANTE
+                # Firmante / Distrito / Bloque
+                
+                # GIRO A COMISIONES EN DIPUTADOS
+                # Comisión
+                
+                # GIRO A COMISIONES EN SENADO
+                # Comisión
+                
+                # TRÁMITE
+                # Cámara / Movimiento / Fecha / Resultado
+
+                title = box.css('h5::text').extract_first().lower()
+
             yield item
 
         next_page = response.css('ul.pagination').css('a[aria-label="Siguiente"]::attr(href)').extract_first()

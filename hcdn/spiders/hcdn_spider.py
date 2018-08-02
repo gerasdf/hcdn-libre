@@ -21,7 +21,7 @@ ARGS_BASE = {
     "strMostrarDictamenes":"on",
     "strMostrarFirmantes":"on",
     "strMostrarComisiones":"on",
-    "strCantPagina":"10",
+    "strCantPagina":"1000",
 }
 
 FILE = "file:home/gera/src/hdcn/all.html"

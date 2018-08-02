@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 import scrapy
 
 URL_BASE  = "https://www.hcdn.gob.ar/proyectos/resultados-buscador.html"

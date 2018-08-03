@@ -44,6 +44,12 @@ class Proyecto(scrapy.Item):
     publicado_en = scrapy.Field()
     fecha = scrapy.Field()
     ley = scrapy.Field()
+    firmantes = scrapy.Field()
+
+class Firmante(scrapy.Item):
+    firmante = scrapy.Field()
+    distrito = scrapy.Field()
+    bloque = scrapy.Field()
 
 class HCDN(scrapy.Spider):
     name = "hcdn"

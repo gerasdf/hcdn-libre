@@ -64,6 +64,30 @@ class HCDN(scrapy.Spider):
            ley = names[-1].split(' ')[1]
            item['ley'] = ley
 
+    def parse_firmante(self, proyecto, item, box):
+        # Firmante / Distrito / Bloque
+        firmantes = []
+        columnas = box.css('tr').css('th::text').extract()
+        columnas = [columna.lower() for columna in columnas]
+        for linea in box.css('tr'):
+            firmante = linea.css('td::text').extract()
+            if firmante:
+               firmante = Firmante(dict(zip(columnas, firmante)))
+               firmantes.append(firmante)
+        item['firmantes'] = firmantes
+
+    def parse_comisiones(self, proyecto, item, box, titulo):
+        # Comisión
+        pass
+
+    def parse_tramite(self, proyecto, item, box):
+        # Cámara / Movimiento / Fecha / Resultado
+        pass
+
+    def parse_dictamenes(self, proyecto, item, box):
+        # Cámara / Dictamen / Texto / Fecha
+        pass
+
     def parse(self, response):
         in_this_page = response.css('div.detalle-proyecto')
         for proyecto in in_this_page:
@@ -74,19 +98,19 @@ class HCDN(scrapy.Spider):
             self.parse_metadata(proyecto, item)
 
             for box in proyecto.css('div.dp-box'):
-                # FIRMANTE
-                # Firmante / Distrito / Bloque
-                
-                # GIRO A COMISIONES EN DIPUTADOS
-                # Comisión
-                
-                # GIRO A COMISIONES EN SENADO
-                # Comisión
-                
-                # TRÁMITE
-                # Cámara / Movimiento / Fecha / Resultado
-
-                title = box.css('h5::text').extract_first().lower()
+                title = box.css('h5::text').extract_first()
+                if   title == "FIRMANTES":
+                   self.parse_firmante(proyecto, item, box)
+                elif title == "GIRO A COMISIONES EN DIPUTADOS":
+                   self.parse_comisiones(proyecto, item, box, "en_diputados")
+                elif title == "GIRO A COMISIONES EN SENADO":
+                   self.parse_comisiones(proyecto, item, box, "en_senado")
+                elif title == "TRÁMITE":
+                   self.parse_tramite(proyecto, item, box)
+                elif title == "DICTÁMENES DE COMISIÓN":
+                   self.parse_dictamenes(proyecto, item, box)
+                else:
+                   print("************* <- Unknown section ({})".format(title))
 
             yield item
 

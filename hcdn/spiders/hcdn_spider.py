@@ -92,5 +92,8 @@ class HCDN(scrapy.Spider):
 
         next_page = response.css('ul.pagination').css('a[aria-label="Siguiente"]::attr(href)').extract_first()
         if next_page is not None:
-           if '2' in next_page:
-               yield response.follow(next_page, callback=self.parse)
+           #if '2' in next_page: 
+               if next_page[0] == '?':
+                  next_page = "{}&{}".format(BASE_URL,next_page[1:])
+                  yield scrapy.Request(next_page, callback=self.parse)
+               # yield response.follow(next_page, callback=self.parse)

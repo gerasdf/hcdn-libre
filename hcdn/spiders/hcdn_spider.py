@@ -116,7 +116,7 @@ class HCDN(scrapy.Spider):
                 elif title == "DICTÁMENES DE COMISIÓN":
                    self.parse_dictamenes(proyecto, item, box)
                 else:
-                   print("************* <- Unknown section ({})".format(title))
+                   print("************* <- Unknown section") # ({})".format(title))
 
             yield item
 

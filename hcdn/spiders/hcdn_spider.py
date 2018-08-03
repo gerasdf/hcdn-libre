@@ -33,8 +33,8 @@ def build_url(base, parameters):
 
     return answer
 
-SEARCH_BASE = build_url(URL_BASE, ARGS_BASE)
-# SEARCH_BASE = FILE 
+BASE_URL = build_url(URL_BASE, ARGS_BASE)
+# BASE_URL = FILE 
 
 class Proyecto(scrapy.Item):
     titulo = scrapy.Field()
@@ -49,7 +49,7 @@ class HCDN(scrapy.Spider):
     name = "hcdn"
 
     def start_requests(self):
-        yield scrapy.Request(url=SEARCH_BASE, callback=self.parse)
+        yield scrapy.Request(url=BASE_URL, callback=self.parse)
 
     def parse_metadata(self, proyecto, item):
         metadata = proyecto.css('div.dp-metadata')

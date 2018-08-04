@@ -45,11 +45,35 @@ class Proyecto(scrapy.Item):
     fecha = scrapy.Field()
     ley = scrapy.Field()
     firmantes = scrapy.Field()
+    comisiones = scrapy.Field()
+    dictamenes = scrapy.Field()
+    en_diputados = scrapy.Field()
+    en_senado = scrapy.Field()
+    tramites = scrapy.Field()
 
 class Firmante(scrapy.Item):
+    orden = scrapy.Field()
     firmante = scrapy.Field()
     distrito = scrapy.Field()
     bloque = scrapy.Field()
+
+class Comision(scrapy.Item):
+    orden = scrapy.Field()
+    comisión = scrapy.Field()
+    
+class Tramite(scrapy.Item):
+    orden = scrapy.Field()
+    cámara = scrapy.Field()
+    movimiento = scrapy.Field()
+    resultado = scrapy.Field()
+    fecha = scrapy.Field()
+
+class Dictamen(scrapy.Item):
+    orden = scrapy.Field()
+    cámara = scrapy.Field()
+    dictamen = scrapy.Field()
+    texto = scrapy.Field()
+    fecha = scrapy.Field()
 
 class HCDN(scrapy.Spider):
     name = "hcdn"
@@ -70,29 +94,31 @@ class HCDN(scrapy.Spider):
            ley = names[-1].split(' ')[1]
            item['ley'] = ley
 
-    def parse_firmante(self, proyecto, item, box):
-        # Firmante / Distrito / Bloque
-        firmantes = []
+    def parse_box(self, box, Item):
+        answer = []
         columnas = box.css('tr').css('th::text').extract()
         columnas = [columna.lower() for columna in columnas]
+        orden = 1
         for linea in box.css('tr'):
             firmante = linea.css('td::text').extract()
             if firmante:
-               firmante = Firmante(dict(zip(columnas, firmante)))
-               firmantes.append(firmante)
-        item['firmantes'] = firmantes
+               firmante = Item(dict(zip(columnas, firmante)))
+               firmante['orden'] = orden
+               answer.append(firmante)
+               orden += 1
+        return answer
+        
+    def parse_firmante(self, proyecto, item, box):
+        item['firmantes'] = self.parse_box(box, Firmante)
 
     def parse_comisiones(self, proyecto, item, box, titulo):
-        # Comisión
-        pass
+        item[titulo] = self.parse_box(box, Comision)
 
     def parse_tramite(self, proyecto, item, box):
-        # Cámara / Movimiento / Fecha / Resultado
-        pass
+        item['tramites'] = self.parse_box(box, Tramite)
 
     def parse_dictamenes(self, proyecto, item, box):
-        # Cámara / Dictamen / Texto / Fecha
-        pass
+        item['dictamenes'] = self.parse_box(box, Dictamen)
 
     def parse(self, response):
         in_this_page = response.css('div.detalle-proyecto')

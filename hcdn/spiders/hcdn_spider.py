@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import unicodedata
 import scrapy
 
 URL_BASE  = "https://www.hcdn.gob.ar/proyectos/resultados-buscador.html"
@@ -36,7 +37,6 @@ def build_url(base, parameters):
 BASE_URL = build_url(URL_BASE, ARGS_BASE)
 # BASE_URL = FILE 
 
-
 class Proyecto(scrapy.Item):
     titulo = scrapy.Field()
     expediente_diputados = scrapy.Field()
@@ -60,21 +60,24 @@ class Firmante(scrapy.Item):
 
 class Comision(scrapy.Item):
     orden = scrapy.Field()
-    comisión = scrapy.Field()
+    comision = scrapy.Field()
     
 class Tramite(scrapy.Item):
     orden = scrapy.Field()
-    cámara = scrapy.Field()
+    camara = scrapy.Field()
     movimiento = scrapy.Field()
     resultado = scrapy.Field()
     fecha = scrapy.Field()
 
 class Dictamen(scrapy.Item):
     orden = scrapy.Field()
-    cámara = scrapy.Field()
+    camara = scrapy.Field()
     dictamen = scrapy.Field()
     texto = scrapy.Field()
     fecha = scrapy.Field()
+
+def noTilde(string):
+    return unicodedata.normalize('NFKD',string).encode('ascii','ignore').decode()
 
 class HCDN(scrapy.Spider):
     name = "hcdn"
@@ -98,7 +101,7 @@ class HCDN(scrapy.Spider):
     def parse_box(self, box, Item):
         answer = []
         columnas = box.css('tr').css('th::text').extract()
-        columnas = [columna.lower() for columna in columnas]
+        columnas = [noTilde(columna.lower()) for columna in columnas]
         orden = 1
         for linea in box.css('tr'):
             firmante = linea.css('td::text').extract()

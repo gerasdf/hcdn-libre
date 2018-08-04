@@ -76,7 +76,7 @@ class Dictamen(scrapy.Item):
     texto = scrapy.Field()
     fecha = scrapy.Field()
 
-def noTilde(string):
+def noTildes(string):
     return unicodedata.normalize('NFKD',string).encode('ascii','ignore').decode()
 
 class HCDN(scrapy.Spider):
@@ -101,7 +101,7 @@ class HCDN(scrapy.Spider):
     def parse_box(self, box, Item):
         answer = []
         columnas = box.css('tr').css('th::text').extract()
-        columnas = [noTilde(columna.lower()) for columna in columnas]
+        columnas = [noTildes(columna.lower()) for columna in columnas]
         orden = 1
         for linea in box.css('tr'):
             firmante = linea.css('td::text').extract()
@@ -135,15 +135,16 @@ class HCDN(scrapy.Spider):
 
             for box in proyecto.css('div.dp-box'):
                 title = box.css('h5::text').extract_first()
+                title = noTildes(title)
                 if   title == "FIRMANTES":
                    self.parse_firmante(proyecto, item, box)
                 elif title == "GIRO A COMISIONES EN DIPUTADOS":
                    self.parse_comisiones(proyecto, item, box, "en_diputados")
                 elif title == "GIRO A COMISIONES EN SENADO":
                    self.parse_comisiones(proyecto, item, box, "en_senado")
-                elif title == "TRÁMITE":
+                elif title == "TRAMITE":
                    self.parse_tramite(proyecto, item, box)
-                elif title == "DICTÁMENES DE COMISIÓN":
+                elif title == "DICTAMENES DE COMISION":
                    self.parse_dictamenes(proyecto, item, box)
                 else:
                    print("************* <- Unknown section") # ({})".format(title))

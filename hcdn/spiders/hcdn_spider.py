@@ -36,6 +36,7 @@ def build_url(base, parameters):
 BASE_URL = build_url(URL_BASE, ARGS_BASE)
 # BASE_URL = FILE 
 
+
 class Proyecto(scrapy.Item):
     titulo = scrapy.Field()
     expediente_diputados = scrapy.Field()
